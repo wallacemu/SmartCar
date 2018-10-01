@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+message ReqData {
+    optional int32 width = 1;
+    optional int32 height = 2;
+    required bytes image = 3;
+}
+
+message ResData {
+    optional int32 logid = 1;
+}

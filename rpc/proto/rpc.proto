@@ -1,0 +1,6 @@
+syntax = "proto2";
+import "data.proto";
+
+service RPC {
+    rpc run(ReqData) returns (ResData);
+}
