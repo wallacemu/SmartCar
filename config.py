@@ -9,4 +9,15 @@ Date: 2018/10/05 22:18:23
 Brief: Global Configuration 
 """
 
+import logging
+
+
+# init log
+logging.basicConfig(
+		level=logging.INFO,
+		format='[%(asctime)s][%(levelname)s]%(message)s',
+		datefmt='%Y-%m-%d %H:%M:%S',
+		filename='./log.run',
+		filemode='w')
+
 # vim: set ts=4 sw=4 sts=4 tw=100: 

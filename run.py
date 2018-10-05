@@ -9,10 +9,20 @@ Date: 2018/09/30 21:51:06
 Brief: 
 """
 
+import time
+
+import config
 from rpc.client import Client
+from utils.driver import Driver
+
 
 def run():
-    pass
+    with Driver() as driver_h:
+        start = time.time()
+        for driver in driver_h:
+            print("TimeInterval: %fs" % (time.time() - start))
+            driver.drive(angle=45.0, speed=5.0)
+            start = time.time()
 
 
 if __name__ == '__main__':
