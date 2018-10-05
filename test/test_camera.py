@@ -19,8 +19,12 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 from rpc.client import Client
 
+
+g_img_size = (640, 480)
+
+
 def capture():
-    rawCapture = PiRGBArray(camera, size=(640, 480)) 
+    rawCapture = PiRGBArray(camera, size=g_img_size)
 
     time.sleep(0.1) # capture frames from the camera
 
@@ -42,17 +46,16 @@ def capture_remote():
     stream = io.BytesIO()
 
     with PiCamera() as camera:
-        #camera.resolution = (640, 480)
-        camera.resolution = (320, 240)
+        camera.resolution = g_img_size
         camera.framerate = 10
         camera.hflip = True
         camera.vflip = True
         # warm up the camera
         time.sleep(2)
-        #camera.capture("test.png")
+
         cnt = 0
         for foo in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
-            client.send(stream.getvalue(), 640, 480)
+            client.send(stream.getvalue(), g_img_size[0], g_img_size[1])
             # continuous
             time.sleep(0.05)
             cnt += 1
