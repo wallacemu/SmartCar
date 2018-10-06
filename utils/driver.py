@@ -9,36 +9,44 @@ Date: 2018/10/05 23:34:38
 Brief: drive the car
 """
 
-import logging
 import time
-import traceback
 import string
+import traceback
+import logging
 from serial import Serial
+
+from camera import Camera
 
 
 class Driver(object):
     """ To send the command to the Arduino to drive the car;
     """
     _time_interval = 0.05
+    _baud_rate = 38400
 
     def __init__(self, time_interval=0.05):
         self._time_interval = time_interval
-
+        ## info
         self.power = 0.0
         self.left_speed = 0.0
         self.right_speed = 0.0
         self.sonar = 0.0
-
-        self.car_h = Serial('/dev/ttyUSB0', 38400, timeout=1)
+        self.image = None
+        self.image_stream = None
+        ## handle
+        self.car_h = Serial('/dev/ttyUSB0', self._baud_rate, timeout=1)
+        self.camera_h = Camera()
 
     def __enter__(self):
         return self
 
     def __exit__(self, exe_type, exe_val, exe_trace):
         self.car_h.close()
-        logging.info("[Driver] close car_h and exit.")
+        self.camera_h.exit()
 
-        if exe_trace:
+        logging.info("[Driver] close and exit.")
+        # 其它错误需要提示
+        if exe_trace and exe_type != KeyboardInterrupt:
             logging.info("[Driver] %s" % traceback.format_exc(exe_trace))
 
         return True  # do nothing
@@ -73,10 +81,12 @@ class Driver(object):
 
     def next(self):
         time.sleep(self._time_interval)
-
+        ## car info
         car_state = self.car_h.readline()
         (self.power, self.left_speed, self.right_speed,
                 self.sonar) = self.__parse__(car_state)
+        ## camera
+        self.image_stream, self.image = self.camera_h.capture()
 
         return self
 

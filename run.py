@@ -15,13 +15,21 @@ import config
 from rpc.client import Client
 from utils.driver import Driver
 
-
 def run():
+    client = Client()
     with Driver() as driver_h:
         start = time.time()
+
         for driver in driver_h:
             print("TimeInterval: %fs" % (time.time() - start))
+
+            ## info
+            print driver.power, driver.left_speed
+            client.send(driver.image_stream.getvalue())
+
+            ## drive
             driver.drive(angle=45.0, speed=5.0)
+
             start = time.time()
 
 
