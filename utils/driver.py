@@ -16,16 +16,22 @@ import logging
 from serial import Serial
 
 from camera import Camera
+from timer import Timer
 
 
 class Driver(object):
     """ To send the command to the Arduino to drive the car;
     """
-    _time_interval = 0.05
-    _baud_rate = 38400
+    _signal_cycle = 0.05     # signal control cycle
+    _baud_rate = 38400       # the baud rate between raspberrypi and Arduino
+    _log_cycle = 10          # the cycle for log print
 
-    def __init__(self, time_interval=0.05):
-        self._time_interval = time_interval
+    def __init__(self, signal_cycle=None, camera_resolution=None):
+        if signal_cycle > 0:
+            self._signal_cycle = signal_cycle
+
+        self.timer = Timer()
+        self.cnt = 0     # count
         ## info
         self.power = 0.0
         self.left_speed = 0.0
@@ -35,7 +41,7 @@ class Driver(object):
         self.image_stream = None
         ## handle
         self.car_h = Serial('/dev/ttyUSB0', self._baud_rate, timeout=1)
-        self.camera_h = Camera()
+        self.camera_h = Camera(resolution=camera_resolution)
 
     def __enter__(self):
         return self
@@ -71,22 +77,29 @@ class Driver(object):
         right_speed = string.atof(info_l[2])
         sonar = string.atof(info_l[3].strip())
 
-        logging.info('[Driver][Power=%f][lspeed=%f][rspeed=%f]'
-            '[Sonar=%f]' % (power, left_speed , right_speed, sonar))
-
         return (power, left_speed, right_speed, sonar)
 
     def __iter__(self):
         return self
 
     def next(self):
-        time.sleep(self._time_interval)
+        self.cnt += 1
+        time.sleep(self._signal_cycle)
         ## car info
         car_state = self.car_h.readline()
         (self.power, self.left_speed, self.right_speed,
                 self.sonar) = self.__parse__(car_state)
         ## camera
         self.image_stream, self.image = self.camera_h.capture()
+        ## log
+        if self.cnt % self._log_cycle == 0:
+            logging.info('[Driver][SigCycle=%dms][Power=%f]'
+                    '[lspeed=%f][rspeed=%f][Sonar=%f]' % (
+                        self.timer.elapse() / self._log_cycle,
+                        self.power,
+                        self.left_speed ,
+                        self.right_speed,
+                        self.sonar))
 
         return self
 

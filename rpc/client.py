@@ -34,7 +34,7 @@ class Client():
         data.image = bytes(img_str)
         try:
             res_data = self.stub.run(data)
-            logging.info("[RPCClient][SUCC][id=%d]" % res_data.logid)
+            #logging.info("[RPCClient][SUCC][id=%d]" % res_data.logid)
         except Exception as e:
             logging.info("[RPCClient][FAIL] " + e.message)
         

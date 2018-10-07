@@ -20,8 +20,12 @@ from picamera import PiCamera
 class Camera(object):
     """ Take pictures.
     """
+    _resolution = (32, 32)
 
-    def __init__(self):
+    def __init__(self, resolution = None):
+        if resolution:
+            self._resolution = resolution
+
         self.out_stream = io.BytesIO()
         # camera
         self.camera = PiCamera()
@@ -37,6 +41,7 @@ class Camera(object):
     def __configure__(self):
         """ To set the configuration of the camera. 
         """
+        self.camera.resolution = self._resolution
         self.camera.framerate = 24
         self.camera.hflip = True    # 上下反转，倒置安装
         self.camera.vflip = True    # 左右反转，需要小车视角判别左右
