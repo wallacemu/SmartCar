@@ -18,13 +18,13 @@ from proto import rpc_pb2_grpc
 
 
 class Client():
-    s_server_addr = "192.168.3.3:8801"
+    _server_addr = "192.168.3.3:8801"
 
     def __init__(self, server_addr = None):
         if server_addr:
-            s_server_addr = server_addr
+            self._server_addr = server_addr
         
-        self.channel = grpc.insecure_channel(Client.s_server_addr)
+        self.channel = grpc.insecure_channel(self._server_addr)
         self.stub = rpc_pb2_grpc.RPCStub(channel=self.channel)
 
     def send(self, img_str, w=0, h=0):
@@ -32,13 +32,15 @@ class Client():
         data.width = w
         data.height = h
         data.image = bytes(img_str)
+
+        res_data = None
         try:
             res_data = self.stub.run(data)
             #logging.info("[RPCClient][SUCC][id=%d]" % res_data.logid)
         except Exception as e:
             logging.info("[RPCClient][FAIL] " + e.message)
         
-        return None
+        return res_data
 
 
 def test():

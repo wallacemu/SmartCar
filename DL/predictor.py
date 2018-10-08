@@ -31,7 +31,7 @@ class Predictor(object):
             self._model_dir = model_dir
 
         if img_size:
-            _img_size = img_size
+            self._img_size = img_size
         # C,H,W 
         data_shape = (3, self._img_size[1], self._img_size[0])
         self.inferencer = fluid.Inferencer(
