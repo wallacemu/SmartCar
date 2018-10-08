@@ -11,6 +11,7 @@ Brief: To run a decision maker.
        has been installed with paddlepaddle.
 """
 
+import io
 import time
 import logging
 import numpy
@@ -22,6 +23,7 @@ from rpc.proto import data_pb2
 from rpc.proto import rpc_pb2_grpc
 from DL.predictor import Predictor
 
+import config
 
 g_server_addr = "192.168.3.3:8801"
 g_sleep_time = 86400
@@ -37,8 +39,10 @@ class PredictServer(rpc_pb2_grpc.RPCServicer):
         self.predictor = Predictor(model_dir, img_size)
 
     def run(self, request, context):
-        img = Image.open(request.image)
+        img = Image.open(io.BytesIO(request.image))
         angle = self.predictor.predict(img)
+
+        logging.info("[PredictServer] angle=%d" % angle)
 
         return data_pb2.ResData(logid=angle)
 
@@ -49,6 +53,8 @@ def main():
     rpc_pb2_grpc.add_RPCServicer_to_server(PredictServer(), server)
     server.add_insecure_port(g_server_addr)
     server.start()
+
+    logging.info("Start PredictServer Successfully ...")
 
     try:
         while True:
