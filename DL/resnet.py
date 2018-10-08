@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Copyright (c) 2018 Wallace MU. All Rights Reserved.
+ 
+"""
+File: resnet.py
+Author: wallacemu(wallacemu@163.com)
+Date: 2018/10/08 16:55:41
+Brief: Resnet configure
+"""
+
 import paddle.fluid as fluid
 
 # BN层+Activation function(ReLU)+Conv层 模块
