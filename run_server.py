@@ -25,7 +25,7 @@ from DL.predictor import Predictor
 
 import config
 
-g_server_addr = "192.168.3.3:8801"
+g_server_addr = "0.0.0.0:8001"
 g_sleep_time = 86400
 g_worker_num = 2 
 
@@ -54,7 +54,7 @@ def main():
     server.add_insecure_port(g_server_addr)
     server.start()
 
-    logging.info("Start PredictServer Successfully ...")
+    logging.info("Start PredictServer(%s) Successfully ..." % g_server_addr)
 
     try:
         while True:

@@ -13,8 +13,10 @@ import config
 from rpc.client import Client
 from utils.driver import Driver
 
+
 def run():
-    client = Client()
+    client = Client(server_addr="192.168.3.3:8001")
+
     with Driver(signal_cycle=0, camera_resolution=(32, 32)) as driver_h:
         for driver in driver_h:
             ## info
@@ -27,5 +29,6 @@ def run():
 
 if __name__ == '__main__':
     run()
+
 
 # vim: set ts=4 sw=4 sts=4 tw=100: 

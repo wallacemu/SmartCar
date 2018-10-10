@@ -19,7 +19,7 @@ from rpc.client import Client
 
 
 def main(files):
-    client = Client(server_addr="127.0.0.1:8801")
+    client = Client(server_addr="192.168.3.3:8001")
     stream = io.BytesIO()
 
     start = time.time()
