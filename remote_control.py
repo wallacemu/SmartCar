@@ -25,7 +25,7 @@ def wheel(label):
 
 def run():
     client = Client()
-    index = 2900
+    index = 0
     label = 5    # forward
 
     with Driver(signal_cycle=0, camera_resolution=(320, 240)) as driver_h:

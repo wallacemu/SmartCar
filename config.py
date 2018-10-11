@@ -11,6 +11,20 @@ Brief: Global Configuration
 
 import logging
 
+# Global Configure
+## Server
+DL_SERVER_ADDR = "0.0.0.0:8001"
+DL_SERVER_THREADS=1
+PC_SERVER_ADDR = "0.0.0.0:8002"
+PC_SERVER_THREADS=1  # 不要多线程，否则imshow会有问题
+ONE_DAY=86400
+
+## Camera
+IMAGE_SIZE = (32, 32)    # (width, height)
+
+## Control ENV
+ANGLE_LIST = [0, 2, 5, 8, 10]
+BASE_ANGLE = 9.0
 
 # init log
 logging.basicConfig(

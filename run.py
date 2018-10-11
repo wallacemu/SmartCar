@@ -13,14 +13,16 @@ import config
 from rpc.client import Client
 from utils.driver import Driver
 
+import config
+
 
 g_base_angle = 9.0
 g_base_speed = 7.0
 
 
 def run():
-    dl_client = Client(server_addr="192.168.3.3:8001")
-    pc_client = Client(server_addr="192.168.3.3:8002")
+    dl_client = Client(server_addr=config.DL_SERVER_ADDR)
+    pc_client = Client(server_addr=config.PC_SERVER_ADDR)
 
     with Driver(signal_cycle=0, camera_resolution=(32, 32)) as driver_h:
         for driver in driver_h:

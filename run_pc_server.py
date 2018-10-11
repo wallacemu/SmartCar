@@ -6,57 +6,51 @@
 File: server.py
 Author: wallacemu(wallacemu@163.com)
 Date: 2018/09/30 21:52:56
-Brief: RPC server 
+Brief: Show pictures from car-camera at PC
 """
 
 import time
 import logging
-
 import cv2
 import numpy
-import matplotlib.pyplot as plt
-
 import grpc
-from proto import data_pb2
-from proto import rpc_pb2_grpc
 from concurrent import futures
+from rpc.proto import data_pb2
+from rpc.proto import rpc_pb2_grpc
+
+import config
 
 
-g_server_addr = "192.168.3.3:8801"
-g_sleep_time = 86400
-g_worker_num = 1  # 调用cv2.imshow就不要多线程，容易卡死
-
-
-class Server(rpc_pb2_grpc.RPCServicer):
+class PCServer(rpc_pb2_grpc.RPCServicer):
+    """ Show Images
     """
-    Server实现类
-    """
-    _s_cnt = 0
 
     def run(self, request, context):
-        Server._s_cnt += 1
-
-        logging.info("Receive PIC=%d (%d, %d)" % (
-            Server._s_cnt, request.width, request.height))
+        logging.info("ReceiveImage(%d, %d)" % (
+            request.width, request.height))
 
         data = numpy.fromstring(request.image, dtype=numpy.uint8)
         image = cv2.imdecode(data, cv2.IMREAD_COLOR)
-        cv2.imshow("img", image)
+        cv2.imshow("CarCamera", image)
         cv2.waitKey(1)
 
-        return data_pb2.ResData(logid=Server._s_cnt)
+        return data_pb2.ResData(0)   # Nothing
 
 
 def main():
     server = grpc.server(thread_pool=futures.ThreadPoolExecutor(
-        max_workers=g_worker_num))
-    rpc_pb2_grpc.add_RPCServicer_to_server(Server(), server)
-    server.add_insecure_port(g_server_addr)
+        max_workers=config.PC_SERVER_THREADS))
+
+    rpc_pb2_grpc.add_RPCServicer_to_server(PCServer(), server)
+    server.add_insecure_port(config.PC_SERVER_ADDR)
     server.start()
+
+    logging.info("Start PCServer(%s) Successfully..." % \
+            config.PC_SERVER_ADDR)
 
     try:
         while True:
-            time.sleep(g_sleep_time)
+            time.sleep(config.ONE_DAY)
     except KeyboardInterrupt:
         server.stop(0)
 
