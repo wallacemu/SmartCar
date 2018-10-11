@@ -90,12 +90,13 @@ class Driver(object):
         (self.power, self.left_speed, self.right_speed,
                 self.sonar) = self.__parse__(car_state)
         ## camera
-        self.image_stream, self.image = self.camera_h.capture()
+        self.image_stream, self.image, ctime = self.camera_h.capture()
         ## log
         if self.cnt % self._log_cycle == 0:
-            logging.info('[Driver][SigCycle=%dms][Power=%f]'
-                    '[lspeed=%f][rspeed=%f][Sonar=%f]' % (
+            logging.info('[Driver][SigCycle=%dms][CaptureTime=%dms]'
+                    '[Power=%f][lspeed=%f][rspeed=%f][Sonar=%f]' % (
                         self.timer.elapse() / self._log_cycle,
+                        ctime,
                         self.power,
                         self.left_speed ,
                         self.right_speed,

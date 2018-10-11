@@ -16,6 +16,8 @@ import traceback
 from PIL import Image
 from picamera import PiCamera
 
+from timer import Timer
+
 
 class Camera(object):
     """ Take pictures.
@@ -68,9 +70,10 @@ class Camera(object):
         self.out_stream.seek(0)
         self.out_stream.truncate()
         # take pic
+        t = Timer()
         self.capturer.next()
 
-        return self.out_stream, Image.open(self.out_stream)
+        return self.out_stream, Image.open(self.out_stream), t.elapse()
 
 
 # vim: set ts=4 sw=4 sts=4 tw=100: 

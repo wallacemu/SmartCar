@@ -14,17 +14,34 @@ from rpc.client import Client
 from utils.driver import Driver
 
 
+g_base_angle = 9.0
+g_base_speed = 7.0
+
+
 def run():
-    client = Client(server_addr="192.168.3.3:8001")
+    dl_client = Client(server_addr="192.168.3.3:8001")
+    pc_client = Client(server_addr="192.168.3.3:8002")
 
     with Driver(signal_cycle=0, camera_resolution=(32, 32)) as driver_h:
         for driver in driver_h:
-            ## info
-            print driver.power, driver.left_speed
-            client.send(driver.image_stream.getvalue())
+            speed = g_base_speed
+            angle = 5
+            ## car stat
+            if driver.power is None:     # connect car failed
+                continue
+
+            ## request DLServer
+            pc_client.send(driver.image_stream.getvalue())
+            response = dl_client.send(driver.image_stream.getvalue())
+            if response is None:     # connect DLServer failed
+                continue
 
             ## drive
-            driver.drive(angle=45.0, speed=5.0)
+            if driver.sonar <= 20:
+                speed = 0
+            angle = response.logid
+
+            driver.drive(angle=angle * 9.0, speed=8.0)
 
 
 if __name__ == '__main__':
