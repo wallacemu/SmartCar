@@ -56,7 +56,7 @@ def main():
 
     try:
         while True:
-            time.sleep(g_sleep_time)
+            time.sleep(config.ONE_DAY)
     except KeyboardInterrupt:
         server.stop(0)
 
