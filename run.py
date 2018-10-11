@@ -9,14 +9,13 @@ Date: 2018/09/30 21:51:06
 Brief: 
 """
 
+import logging
+
 import config
 from rpc.client import Client
 from utils.driver import Driver
 
-import config
 
-
-g_base_angle = 9.0
 g_base_speed = 7.0
 
 
@@ -36,6 +35,7 @@ def run():
             pc_client.send(driver.image_stream.getvalue())
             response = dl_client.send(driver.image_stream.getvalue())
             if response is None:     # connect DLServer failed
+                logging.info("[RUN] dl_client rpc failed...")
                 continue
 
             ## drive
