@@ -13,6 +13,7 @@ import logging
 import config
 from rpc.client import Client
 from utils.driver import Driver
+from utils.timer import Timer
 
 
 def run():
@@ -27,6 +28,7 @@ def run():
             angle = 5
             ## car stat
             if driver.power is None:     # connect car failed
+                logging.info("[RUN] car stat is None...")
                 continue
 
             ## request DLServer
