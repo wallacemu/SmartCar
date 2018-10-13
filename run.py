@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python # -*- coding: utf-8 -*-
 # Copyright (c) 2018 Wallace MU. All Rights Reserved.
  
 """
@@ -17,8 +16,10 @@ from utils.driver import Driver
 
 
 def run():
-    dl_client = Client(server_addr=config.DL_SERVER_ADDR)
-    pc_client = Client(server_addr=config.PC_SERVER_ADDR)
+    dl_server_addr = config.DL_SERVER_HOST + ":" + config.DL_SERVER_PORT
+    pc_server_addr = config.PC_SERVER_HOST + ":" + config.PC_SERVER_PORT 
+    dl_client = Client(dl_server_addr)
+    pc_client = Client(pc_server_addr)
 
     with Driver(signal_cycle=0, camera_resolution=(32, 32)) as driver_h:
         for driver in driver_h:

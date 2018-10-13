@@ -38,7 +38,7 @@ class PCServer(rpc_pb2_grpc.RPCServicer):
 
 
 def main():
-    server_addr = config.PC_SERVER_HOST + ":" + config.PC_SERVER_PORT
+    server_addr = config.LOCAL_HOST + ":" + config.PC_SERVER_PORT
 
     server = grpc.server(thread_pool=futures.ThreadPoolExecutor(
         max_workers=config.PC_SERVER_THREADS))

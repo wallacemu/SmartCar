@@ -44,7 +44,7 @@ class DLServer(rpc_pb2_grpc.RPCServicer):
 
 
 def main():
-    server_addr = config.DL_SERVER_HOST + ":" + config.DL_SERVER_PORT
+    server_addr = config.LOCAL_HOST + ":" + config.DL_SERVER_PORT
 
     server = grpc.server(thread_pool=futures.ThreadPoolExecutor(
         max_workers=config.DL_SERVER_THREADS))
