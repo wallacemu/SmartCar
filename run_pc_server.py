@@ -38,15 +38,16 @@ class PCServer(rpc_pb2_grpc.RPCServicer):
 
 
 def main():
+    server_addr = config.PC_SERVER_HOST + ":" + config.PC_SERVER_PORT
+
     server = grpc.server(thread_pool=futures.ThreadPoolExecutor(
         max_workers=config.PC_SERVER_THREADS))
 
     rpc_pb2_grpc.add_RPCServicer_to_server(PCServer(), server)
-    server.add_insecure_port(config.PC_SERVER_ADDR)
+    server.add_insecure_port(server_addr)
     server.start()
 
-    logging.info("Start PCServer(%s) Successfully..." % \
-            config.PC_SERVER_ADDR)
+    logging.info("Start PCServer(%s) Successfully..." % server_addr)
 
     try:
         while True:

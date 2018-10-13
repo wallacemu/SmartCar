@@ -13,13 +13,14 @@ import io
 import time
 import sys
 sys.path.append('../')
-
 from PIL import Image
 from rpc.client import Client
 
+import config
 
 def main(files):
-    client = Client(server_addr="192.168.3.3:8001")
+    addr = config.PC_SERVER_HOST + ":" + config.PC_SERVER_PORT
+    client = Client(addr)
     stream = io.BytesIO()
 
     start = time.time()

@@ -44,15 +44,16 @@ class DLServer(rpc_pb2_grpc.RPCServicer):
 
 
 def main():
+    server_addr = config.DL_SERVER_HOST + ":" + config.DL_SERVER_PORT
+
     server = grpc.server(thread_pool=futures.ThreadPoolExecutor(
         max_workers=config.DL_SERVER_THREADS))
 
     rpc_pb2_grpc.add_RPCServicer_to_server(DLServer(), server)
-    server.add_insecure_port(config.DL_SERVER_ADDR)
+    server.add_insecure_port(server_addr)
     server.start()
 
-    logging.info("Start DLServer(%s) Successfully..." % \
-            config.DL_SERVER_ADDR)
+    logging.info("Start DLServer(%s) Successfully..." % server_addr)
 
     try:
         while True:

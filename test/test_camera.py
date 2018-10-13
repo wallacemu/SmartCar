@@ -19,6 +19,8 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 from rpc.client import Client
 
+import config
+
 
 g_img_size = (640, 480)
 
@@ -42,7 +44,9 @@ def capture():
 
 
 def capture_remote():
-    client = Client()
+    server_addr = config.PC_SERVER_HOST + ":" + config.PC_SERVER_PORT
+
+    client = Client(server_addr)
     stream = io.BytesIO()
 
     with PiCamera() as camera:

@@ -18,7 +18,7 @@ from proto import rpc_pb2_grpc
 
 
 class Client():
-    _server_addr = "192.168.3.3:8801"
+    _server_addr = "192.168.3.3:8002"
 
     def __init__(self, server_addr = None):
         if server_addr:

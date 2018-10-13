@@ -16,16 +16,13 @@ from rpc.client import Client
 from utils.driver import Driver
 
 
-g_base_speed = 7.0
-
-
 def run():
     dl_client = Client(server_addr=config.DL_SERVER_ADDR)
     pc_client = Client(server_addr=config.PC_SERVER_ADDR)
 
     with Driver(signal_cycle=0, camera_resolution=(32, 32)) as driver_h:
         for driver in driver_h:
-            speed = g_base_speed
+            speed = config.BASE_SPEED
             angle = 5
             ## car stat
             if driver.power is None:     # connect car failed
