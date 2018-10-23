@@ -24,10 +24,10 @@ class Driver(object):
     """
     _signal_cycle = 0.05     # signal control cycle
     _baud_rate = 38400       # the baud rate between raspberrypi and Arduino
-    _log_cycle = 10          # the cycle for log print
+    _log_cycle = 2           # the cycle for log print
 
     def __init__(self, signal_cycle=None, camera_resolution=None):
-        if signal_cycle > 0:
+        if not signal_cycle is None:
             self._signal_cycle = signal_cycle
 
         self.timer = Timer()
@@ -92,7 +92,7 @@ class Driver(object):
         ## camera
         self.image_stream, self.image, ctime = self.camera_h.capture()
         ## log
-        if self.cnt % self._log_cycle == 0:
+        if (not self.power is None) and (self.cnt % self._log_cycle == 0):
             logging.info('[Driver][SigCycle=%dms][CaptureTime=%dms]'
                     '[Power=%f][lspeed=%f][rspeed=%f][Sonar=%f]' % (
                         self.timer.elapse() / self._log_cycle,
