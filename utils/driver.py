@@ -13,32 +13,30 @@ import time
 import string
 import traceback
 import logging
+import collections
 from serial import Serial
 
 from camera import Camera
 from timer import Timer
 
+## the states of the car 
+CarState = collections.namedtuple('CarState',
+        ['power', 'lspeed', 'rspeed', 'sonar', 'image', 'image_str'])
+
 
 class Driver(object):
     """ To send the command to the Arduino to drive the car;
     """
-    _signal_cycle = 0.05     # signal control cycle
+    _signal_period = 0.05     # signal control cycle
     _baud_rate = 38400       # the baud rate between raspberrypi and Arduino
     _log_cycle = 2           # the cycle for log print
 
     def __init__(self, signal_cycle=None, camera_resolution=None):
         if not signal_cycle is None:
-            self._signal_cycle = signal_cycle
+            self._signal_period = signal_cycle
 
+        self.log_cnt = 0     # count for log-cycle
         self.timer = Timer()
-        self.cnt = 0     # count
-        ## info
-        self.power = 0.0
-        self.left_speed = 0.0
-        self.right_speed = 0.0
-        self.sonar = 0.0
-        self.image = None
-        self.image_stream = None
         ## handle
         self.car_h = Serial('/dev/ttyUSB0', self._baud_rate, timeout=1)
         self.camera_h = Camera(resolution=camera_resolution)
@@ -59,7 +57,7 @@ class Driver(object):
 
     def __parse__(self, car_state):
         """ Parse the response from the car, which is about the
-            state of the car.
+            states of the car.
         """
         info_l = car_state.split(':')
 
@@ -73,37 +71,31 @@ class Driver(object):
             return [None] * 4
 
         power = string.atof(info_l[0])
-        left_speed = string.atof(info_l[1])
-        right_speed = string.atof(info_l[2])
+        lspeed = string.atof(info_l[1])
+        rspeed = string.atof(info_l[2])
         sonar = string.atof(info_l[3].strip())
 
-        return (power, left_speed, right_speed, sonar)
+        return (power, lspeed, rspeed, sonar)
 
     def __iter__(self):
         return self
 
     def next(self):
-        self.cnt += 1
-        time.sleep(self._signal_cycle)
-        ## car info
-        car_state = self.car_h.readline()
-        (self.power, self.left_speed, self.right_speed,
-                self.sonar) = self.__parse__(car_state)
+        self.log_cnt += 1
+        time.sleep(self._signal_period)   # wait a moment for acquisition period
+        ## base info
+        arduino_info = self.car_h.readline()
+        (power, lspeed, rspeed, sonar) = self.__parse__(arduino_info)
         ## camera
-        self.image_stream, self.image, ctime = self.camera_h.capture()
+        image_str, image, capture_time = self.camera_h.capture()
         ## log
-        if (not self.power is None) and (self.cnt % self._log_cycle == 0):
+        if (not power is None) and (self.log_cnt % self._log_cycle == 0):
             logging.info('[Driver][SigCycle=%dms][CaptureTime=%dms]'
                     '[Power=%f][lspeed=%f][rspeed=%f][Sonar=%f]' % (
                         self.timer.elapse() / self._log_cycle,
-                        ctime,
-                        self.power,
-                        self.left_speed ,
-                        self.right_speed,
-                        self.sonar))
+                        capture_time, power, lspeed , rspeed, sonar))
 
-        return self
-
+        return CarState(power, lspeed, rspeed, sonar, image, image_str)
 
     def drive(self, angle, speed):
         self.car_h.write(

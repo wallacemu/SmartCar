@@ -44,7 +44,7 @@ class Camera(object):
         """ To set the configuration of the camera. 
         """
         self.camera.resolution = self._resolution
-        self.camera.framerate = 24
+        self.camera.framerate = 50
         self.camera.hflip = True    # 上下反转，倒置安装
         self.camera.vflip = True    # 左右反转，需要小车视角判别左右
 
@@ -73,7 +73,7 @@ class Camera(object):
         t = Timer()
         self.capturer.next()
 
-        return self.out_stream, Image.open(self.out_stream), t.elapse()
+        return self.out_stream.getvalue(), Image.open(self.out_stream), t.elapse()
 
 
 # vim: set ts=4 sw=4 sts=4 tw=100: 
