@@ -31,9 +31,9 @@ class Driver(object):
     _baud_rate = 38400       # the baud rate between raspberrypi and Arduino
     _log_cycle = 2           # the cycle for log print
 
-    def __init__(self, signal_cycle=None, camera_resolution=None):
-        if not signal_cycle is None:
-            self._signal_period = signal_cycle
+    def __init__(self, signal_period=None, camera_resolution=None):
+        if not signal_period is None:
+            self._signal_period = signal_period
 
         self.log_cnt = 0     # count for log-cycle
         self.timer = Timer()
@@ -87,7 +87,7 @@ class Driver(object):
         arduino_info = self.car_h.readline()
         (power, lspeed, rspeed, sonar) = self.__parse__(arduino_info)
         ## camera
-        image_str, image, capture_time = self.camera_h.capture()
+        image_str, capture_time = self.camera_h.capture()
         ## log
         if (not power is None) and (self.log_cnt % self._log_cycle == 0):
             logging.info('[Driver][SigCycle=%dms][CaptureTime=%dms]'
@@ -95,7 +95,7 @@ class Driver(object):
                         self.timer.elapse() / self._log_cycle,
                         capture_time, power, lspeed , rspeed, sonar))
 
-        return CarState(power, lspeed, rspeed, sonar, image, image_str)
+        return CarState(power, lspeed, rspeed, sonar, None, image_str)
 
     def drive(self, angle, speed):
         self.car_h.write(

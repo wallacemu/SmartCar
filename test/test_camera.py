@@ -20,9 +20,10 @@ from picamera import PiCamera
 from rpc.client import Client
 
 import config
+from utils.timer import Timer
 
 
-g_img_size = (640, 480)
+g_img_size = (32, 32)
 
 
 def capture():
@@ -51,17 +52,23 @@ def capture_remote():
 
     with PiCamera() as camera:
         camera.resolution = g_img_size
-        camera.framerate = 10
+        camera.framerate = 30
         camera.hflip = True
         camera.vflip = True
         # warm up the camera
         time.sleep(2)
 
         cnt = 0
+        cycle = Timer()
+        capture_t = Timer()
         for foo in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
-            client.send(stream.getvalue(), g_img_size[0], g_img_size[1])
+            print "capture time:", capture_t.elapse()
+            print "cycle:", cycle.elapse()
+            t = Timer()
+            #client.send(stream.getvalue(), g_img_size[0], g_img_size[1])
+            print "send data: ", t.elapse()
             # continuous
-            time.sleep(0.05)
+            #time.sleep(0.05)
             cnt += 1
             if cnt >= 1000:
                 break
@@ -69,6 +76,8 @@ def capture_remote():
             stream.seek(0)
             # 清空当前文件指针之后的内容，即全部stream
             stream.truncate()
+            print "stream mod: ", t.elapse()
+            capture_t.elapse()
 
 
 if __name__ == '__main__':

@@ -63,8 +63,8 @@ class Camera(object):
         self.camera.close()
         logging.info("[Camera] close and exit.")
 
-    def capture(self):
-        """ return image-stream and Image-object
+    def capture(self, output_object=False):
+        """ return image-stream or Image-object
         """
         # clean out_stream
         self.out_stream.seek(0)
@@ -73,7 +73,10 @@ class Camera(object):
         t = Timer()
         self.capturer.next()
 
-        return self.out_stream.getvalue(), Image.open(self.out_stream), t.elapse()
+        if output_object:
+            return Image.open(self.out_stream), t.elapse()
+        else:
+            return self.out_stream.getvalue(), t.elapse()
 
 
 # vim: set ts=4 sw=4 sts=4 tw=100: 

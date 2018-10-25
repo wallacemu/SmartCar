@@ -19,6 +19,7 @@ from proto import rpc_pb2_grpc
 
 class Client():
     _server_addr = "192.168.3.3:8002"
+    _timeout_s = 1
 
     def __init__(self, server_addr = None):
         if server_addr:
@@ -35,10 +36,10 @@ class Client():
 
         res_data = None
         try:
-            res_data = self.stub.run(data)
+            res_data = self.stub.run(data, Client._timeout_s)
             #logging.info("[RPCClient][SUCC][id=%d]" % res_data.logid)
         except Exception as e:
-            logging.info("[RPCClient][FAIL] " + e.message)
+            logging.info("[RPCClient][FAIL]" + e.message)
         
         return res_data
 
