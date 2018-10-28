@@ -31,6 +31,7 @@ class PCServer(rpc_pb2_grpc.RPCServicer):
 
         data = numpy.fromstring(request.image, dtype=numpy.uint8)
         image = cv2.imdecode(data, cv2.IMREAD_COLOR)
+        image = cv2.resize(image, (320, 320), interpolation=cv2.INTER_CUBIC)
         cv2.imshow("CarCamera", image)
         cv2.waitKey(1)
 

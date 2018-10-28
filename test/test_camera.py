@@ -27,24 +27,6 @@ g_img_size = (32, 32)
 
 
 def capture():
-    rawCapture = PiRGBArray(camera, size=g_img_size)
-
-    time.sleep(0.1) # capture frames from the camera
-
-    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-        # grab the raw NumPy array representing the image, then initialize the timestamp
-        # and occupied/unoccupied text
-        image = frame.array # show the frame
-        cv2.imshow("Frame", image)
-        key = cv2.waitKey(1) & 0xFF
-        # clear the stream in preparation for the next frame
-        rawCapture.truncate(0)
-        # if the `q` key was pressed, break from the loop
-        if key == ord("q"):
-            break
-
-
-def capture_remote():
     server_addr = config.PC_SERVER_HOST + ":" + config.PC_SERVER_PORT
 
     client = Client(server_addr)
@@ -59,29 +41,31 @@ def capture_remote():
         time.sleep(2)
 
         cnt = 0
-        cycle = Timer()
-        capture_t = Timer()
-        for foo in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
-            print "capture time:", capture_t.elapse()
-            print "cycle:", cycle.elapse()
-            t = Timer()
-            #client.send(stream.getvalue(), g_img_size[0], g_img_size[1])
-            print "send data: ", t.elapse()
-            # continuous
-            #time.sleep(0.05)
+        cycle_timer = Timer()
+        capture_timer = Timer()
+
+        for foo in camera.capture_continuous(stream, format='jpeg',
+                use_video_port=True):
+            t1 = capture_timer.elapse()
+            tmp_timer = Timer()
+            client.send(stream.getvalue(), g_img_size[0], g_img_size[1])
+            t2 = tmp_timer.elapse()
+
             cnt += 1
             if cnt >= 1000:
                 break
-            # 流定位到最开始，重新写入
+
             stream.seek(0)
-            # 清空当前文件指针之后的内容，即全部stream
             stream.truncate()
-            print "stream mod: ", t.elapse()
-            capture_t.elapse()
+            t3 = tmp_timer.elapse()
+
+            t4 = cycle_timer.elapse()
+            print "cycle:", t4, "capture:", t1, "send:", t2, "clear_stream:", t3
+            capture_timer.elapse()
 
 
 if __name__ == '__main__':
-    capture_remote()
+    capture()
 
 
 # vim: set ts=4 sw=4 sts=4 tw=100: 
