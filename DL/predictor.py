@@ -22,8 +22,8 @@ class Predictor(object):
     """
     """
     _model_dir = "./model/"
-    _img_size = (32, 32)     # (width, height)
-    _label_list = [0, 2, 5, 8, 10]   # The actual labels
+    _img_size = (32, 32)     # (width, height): must be same as the input of model
+    _label_list = [0, 22.5, 45, 67.5, 90]   # The actual steering angle
     _label_cnt = len(_label_list)
 
     def __init__(self, model_dir=None, img_size=None):
@@ -41,7 +41,10 @@ class Predictor(object):
 
 
     def format_input(self, img):
+        w, h = img.size
+        img = img.crop((0, h/2, w, h))
         img = img.resize(self._img_size, Image.ANTIALIAS)
+
         img = np.array(img).astype(np.float32)
         img = img / 255.0
         img = img.transpose((2, 0, 1))  # To CHW order
