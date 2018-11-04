@@ -35,7 +35,7 @@ def main(files):
         ## send
         res = client.send(stream.getvalue(), img.size[0], img.size[1])
         if res:
-            print f, res.logid
+            print f, res.angle
     
     print "RPC: request_time=%fms" % ((time.time() - start) / len(files) * 100)
         

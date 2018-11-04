@@ -40,7 +40,7 @@ class DLServer(rpc_pb2_grpc.RPCServicer):
 
         logging.info("[DLServer] angle=%d" % angle)
 
-        return data_pb2.ResData(logid=angle)
+        return data_pb2.ResData(angle=angle)
 
 
 def main():

@@ -29,10 +29,10 @@ def run_singlethread():
     dl_client = Client(g_dl_server_addr)
     pc_client = Client(g_pc_server_addr)
 
-    with Driver(signal_period=0, camera_resolution=(32, 32)) as driver_h:
+    with Driver(signal_period=0, camera_resolution=(320, 240)) as driver_h:
         for state in driver_h:
             speed = config.BASE_SPEED
-            angle = 5
+            angle = 45
             ## car stat
             if state.power is None:     # connect car failed
                 logging.info("[RUN] car stat is None...")
@@ -49,9 +49,9 @@ def run_singlethread():
             ## drive
             if state.sonar <= 20:
                 speed = 0
-            angle = response.logid
+            angle = response.angle
 
-            driver_h.drive(angle=angle * 9.0, speed=8.0)
+            driver_h.drive(angle=angle, speed=5)
 
 
 class CarStateWorker(Thread):
@@ -112,7 +112,7 @@ class CarCtlWorker(Thread):
                 logging.info("[RUN] state_q is empty.")
                 continue
 
-            #self.pc_client.send(state.image_str)
+            self.pc_client.send(state.image_str)
             t = Timer()
             response = self.dl_client.send(state.image_str)
             if response is None:     # connect DLServer failed
@@ -122,9 +122,9 @@ class CarCtlWorker(Thread):
 
             if state.sonar <= 20:
                 speed = 0
-            angle = response.logid
+            angle = response.angle
 
-            self.driver_h.drive(angle=angle * 9.0, speed=8.0)
+            self.driver_h.drive(angle=angle, speed=5)
 
             t2 = t.elapse()
             logging.info("[state_q=%d][dl_client_time=%.0fms]"
@@ -143,7 +143,7 @@ def run_multithread():
     signal.signal(signal.SIGINT, stop_worker)
     signal.signal(signal.SIGTERM, stop_worker)
 
-    with Driver(signal_period=0, camera_resolution=(32, 32)) as driver_h:
+    with Driver(signal_period=0, camera_resolution=(320, 240)) as driver_h:
         dl_client = Client(g_dl_server_addr)
         pc_client = Client(g_pc_server_addr)
         state_q = Queue.Queue()      # for car state info

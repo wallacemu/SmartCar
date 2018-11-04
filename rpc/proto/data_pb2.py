@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='data.proto',
   package='',
   syntax='proto2',
-  serialized_pb=_b('\n\ndata.proto\"7\n\x07ReqData\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x12\r\n\x05image\x18\x03 \x02(\x0c\"\x18\n\x07ResData\x12\r\n\x05logid\x18\x01 \x01(\x05')
+  serialized_pb=_b('\n\ndata.proto\"7\n\x07ReqData\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x12\r\n\x05image\x18\x03 \x02(\x0c\"\x18\n\x07ResData\x12\r\n\x05\x61ngle\x18\x01 \x01(\x02')
 )
 
 
@@ -78,9 +78,9 @@ _RESDATA = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='logid', full_name='ResData.logid', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
+      name='angle', full_name='ResData.angle', index=0,
+      number=1, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),

@@ -23,7 +23,7 @@ import config
 from utils.timer import Timer
 
 
-g_img_size = (32, 32)
+g_img_size = (320, 240)
 
 
 def capture():

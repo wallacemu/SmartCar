@@ -37,7 +37,7 @@ class Client():
         res_data = None
         try:
             res_data = self.stub.run(data, Client._timeout_s)
-            #logging.info("[RPCClient][SUCC][id=%d]" % res_data.logid)
+            #logging.info("[RPCClient][SUCC][id=%f]" % res_data.angle)
         except Exception as e:
             logging.info("[RPCClient][FAIL]" + e.message)
         

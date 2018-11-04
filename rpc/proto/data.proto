@@ -7,5 +7,5 @@ message ReqData {
 }
 
 message ResData {
-    optional int32 logid = 1;
+    optional float angle = 1;
 }
