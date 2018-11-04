@@ -38,7 +38,7 @@ class DLServer(rpc_pb2_grpc.RPCServicer):
         img = Image.open(io.BytesIO(request.image))
         angle = self.predictor.predict(img)
 
-        logging.info("[DLServer] angle=%d" % angle)
+        logging.info("[DLServer] angle=%f" % angle)
 
         return data_pb2.ResData(angle=angle)
 

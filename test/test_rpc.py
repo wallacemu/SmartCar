@@ -19,7 +19,7 @@ from rpc.client import Client
 import config
 
 def main(files):
-    addr = config.PC_SERVER_HOST + ":" + config.PC_SERVER_PORT
+    addr = config.DL_SERVER_HOST + ":" + config.DL_SERVER_PORT
     client = Client(addr)
     stream = io.BytesIO()
 
