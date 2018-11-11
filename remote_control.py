@@ -11,6 +11,8 @@ Brief: remote control for samples
 
 import os
 import re
+import time
+
 import config
 from rpc.client import Client
 from utils.driver import Driver
@@ -25,24 +27,22 @@ def wheel(label):
 
 def run():
     client = Client()
-    index = 0
     label = 5    # forward
 
-    with Driver(signal_cycle=0, camera_resolution=(320, 240)) as driver_h:
+    with Driver(signal_period=0, camera_resolution=(320, 240), output_im=True) as driver_h:
 
-        for driver in driver_h:
+        for car_state in driver_h:
             ## info
-            if driver.power is None:
+            if car_state.power is None:
                 continue
             
             print('[Power=%f][lspeed=%f][rspeed=%f][Sonar=%f]' % (
-                        driver.power,
-                        driver.left_speed ,
-                        driver.right_speed,
-                        driver.sonar))
-            index += 1
+                        car_state.power,
+                        car_state.lspeed ,
+                        car_state.rspeed,
+                        car_state.sonar))
             ## image
-            client.send(driver.image_stream.getvalue())
+            client.send(car_state.image_str)
 
             ## control
             ipt = raw_input("Angle:")
@@ -58,9 +58,10 @@ def run():
                 label = int(ipt)
 
             ## save samples
-            driver.image.save("%s/%d_%d.png" % (g_output, index, label))
+            index = int(time.time() * 1000)
+            car_state.image.save("%s/%d_%d.png" % (g_output, index, label))
 
-            driver.drive(angle=wheel(label), speed=5.0)
+            driver_h.drive(angle=wheel(label), speed=5.0)
 
 
 if __name__ == '__main__':
