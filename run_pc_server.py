@@ -34,7 +34,7 @@ class PCServer(rpc_pb2_grpc.RPCServicer):
         cv2.imshow("CarCamera", image)
         cv2.waitKey(1)
 
-        return data_pb2.ResData(logid=0)   # Nothing
+        return data_pb2.ResData(angle=0)   # Nothing
 
 
 def main():
